@@ -40,7 +40,7 @@ if __name__ == '__main__':
     print("Enter first number")
     a=input()
     print("Enter second number")
-    b=input();
+    b=input()
     print("Enter Operation:add,sub,mult,div")
     operation=input()
     print(calculation(a,b,operation))
