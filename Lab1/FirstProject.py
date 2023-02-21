@@ -37,8 +37,9 @@ def sort_list(list):
 if __name__ == '__main__':
     print_hi('World')
 
-    print("Enter two numbers")
+    print("Enter first number")
     a=input()
+    print("Enter second number")
     b=input();
     print("Enter Operation:add,sub,mult,div")
     operation=input()
