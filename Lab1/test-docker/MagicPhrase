@@ -1,0 +1,2 @@
+docker run -v /home/vboxuser/test-docker/:/dir -ti pyimage python3 /dir/FirstProject.py
+docker start -i 4ba48720369d
