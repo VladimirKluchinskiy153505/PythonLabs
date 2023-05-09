@@ -1,0 +1,26 @@
+Metadata-Version: 2.1
+Name: KluchinskiySerializator
+Version: 1.0
+Summary: Release library
+Author: Vladimir Kluchinskiy
+Author-email: vova.klyuch@gmail.com
+License: MIT
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+
+from kluchinskiy_serializer import great_serializer
+#create serializer
+json_serializer = great_serializer.create_serializer('json')
+py_obj = {'a': 4.32, 'b': complex(2.4, -9.3), 'c':True}
+#serialize object
+ser_obj = json_serializer.dumps(py_obj)
+#restore object
+des_obj = json_serializer.loads(ser_obj)
+print(des_obj)

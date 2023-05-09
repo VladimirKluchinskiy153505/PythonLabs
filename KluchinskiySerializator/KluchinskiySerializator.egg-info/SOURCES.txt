@@ -1,0 +1,13 @@
+README.md
+setup.py
+KluchinskiySerializator/__init__.py
+KluchinskiySerializator/consts_for_function.py
+KluchinskiySerializator/great_serializer.py
+KluchinskiySerializator/my_json_serializer.py
+KluchinskiySerializator/my_xml_serializer.py
+KluchinskiySerializator/python_serializer.py
+KluchinskiySerializator.egg-info/PKG-INFO
+KluchinskiySerializator.egg-info/SOURCES.txt
+KluchinskiySerializator.egg-info/dependency_links.txt
+KluchinskiySerializator.egg-info/requires.txt
+KluchinskiySerializator.egg-info/top_level.txt
