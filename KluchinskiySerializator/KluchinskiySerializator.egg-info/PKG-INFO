@@ -1,0 +1,24 @@
+Metadata-Version: 2.1
+Name: KluchinskiySerializator
+Version: 1.0
+Summary: Release library
+Author: Vladimir Kluchinskiy
+Author-email: vova.klyuch@gmail.com
+License: MIT
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+
+from KluchinskiySerializator import great_serializer
+#
+xml_serializer = great_serializer.create_serializer('xml')
+ser_func = xml_serializer.dumps(func)
+des_func = xml_serializer.loads(ser_func)
+#
+des_func()
