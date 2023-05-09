@@ -1,3 +1,0 @@
-my_json_serializer
-my_xml_serializer
-python_serializer
