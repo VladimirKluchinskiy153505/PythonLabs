@@ -82,5 +82,24 @@ class TestClassObjects(unittest.TestCase):
         ser_obj = xml_serializer.dumps(obj)
         des_obj = xml_serializer.loads(ser_obj)
         self.assertEqual(des_obj(), 3)
+
+    def test_property(self):
+        obj = test_classes.PropHolder(23, 1, 3)
+        xml_serializer = great_serializer.create_serializer('xml')
+        ser_obj = xml_serializer.dumps(obj)
+        des_obj = xml_serializer.loads(ser_obj)
+        obj.Age =500
+        des_obj.Age = obj.Age
+        self.assertEqual((des_obj.Age, des_obj.method1()),(obj.Age, obj.method1()))
+
+    def test_hard_inheritance(self):
+        my_bat = test_classes.Bat("Dracula", "Megachiroptera", 2, 10)
+        json_serializer = great_serializer.create_serializer('json')
+        ser_obj = json_serializer.dumps(my_bat)
+
+        des_obj = json_serializer.loads(ser_obj)
+        # Call some methods
+        self.assertEqual((my_bat.give_birth(), my_bat.lay_eggs(), my_bat.fly()), (des_obj.give_birth(), des_obj.lay_eggs(), des_obj.fly()))
+
 if __name__ == '__main__':
     unittest.main()

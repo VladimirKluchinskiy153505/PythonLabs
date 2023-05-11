@@ -1,4 +1,32 @@
 import math
+class Animal:
+    def __init__(self, name, species):
+        self.name = name
+        self.species = species
+
+    def make_sound(self):
+        print("The animal makes a sound.")
+class Mammal(Animal):
+    def __init__(self, name, species, num_legs):
+        Animal.__init__(self, name, species)
+        self.num_legs = num_legs
+    def give_birth(self):
+        print("The mammal gives birth to live young.")
+
+class Bird(Animal):
+    def __init__(self, name, species, wingspan):
+        Animal.__init__(self, name, species)
+        self.wingspan = wingspan
+
+    def lay_eggs(self):
+        print("The bird lays eggs.")
+class Bat(Mammal, Bird):
+    def __init__(self, name, species, num_legs, wingspan):
+        Mammal.__init__(self, name, species, num_legs)
+        Bird.__init__(self, name, species, wingspan)
+
+    def fly(self):
+        print(f"The {self.species} with a wingspan of {self.wingspan} inches is flying.")
 class Person:
     position = "Student"
     __private_field = 'Adress'
@@ -14,7 +42,7 @@ class Person:
         print("My age is " + self.age)
     @property
     def age(self):
-        return self.age
+        return self._age
     @age.setter
     def age(self, value):
         if not isinstance(value, int):
@@ -73,9 +101,19 @@ class MyClass:
         return cls.class_variable
 def create_class_point(name,bases,attrs):
     attrs.update({'Max_Cord': 100, 'Min_Cord': 0})
-    return type(name,bases, attrs)
+    return type(name, bases, attrs)
 
-class Point2D(metaclass= create_class_point):
+class Point(metaclass= create_class_point):
+     def __init__(self, *args):
+         self.__coords = args
+     def __len__(self):
+         return len(self.__coords)
+     def __abs__(self):
+         return list(map(abs, self.__coords))
+     def __add__(self, other):
+         if not isinstance(other, int):
+             raise ArithmeticError('must be int')
+         return self.__coords[0]+ other
      def get_coords(self):
          return (0,0)
 
@@ -128,6 +166,13 @@ class Point3D(metaclass= Meta):
     @staticmethod
     def static_method():
         return 'static_method called'
+class Cat:
+    def __init__(self, name):
+        self.name = name
+    def __repr__(self):
+        return f"{self.__class__}:{self.name}"
+    def __str__(self):
+        return f"{self.name}"
 
 class Example(metaclass= Meta):
     def __init__(self, x):
@@ -155,4 +200,20 @@ class B(A, AA):
         AA.__init__(self, a, b)
     def methodB(self):
         return self.methodA() +self.methodAA()
-
+class PropHolder:
+    def __init__(self, age, a, b):
+        self._age = age
+        self.a = a
+        self.b = b
+    @property
+    def Age(self):
+        return self._age
+    @Age.setter
+    def Age(self, value):
+        if value>0:
+            self._age = value
+        else:
+            self._age = 0
+    @decorator_square
+    def method1(self):
+        return self.a + self.b

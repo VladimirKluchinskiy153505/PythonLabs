@@ -2,17 +2,16 @@ import types
 import inspect
 import re
 from KluchinskiySerializator.consts_for_function import *
-def serialize(object):
+def serialize(object,cls =None):
     ser_dict = dict()
     object_type = type(object)
     #print('object_type',object_type)
-
     def object_type_name():
         return re.search(r"\'(\w+)\'", str(object_type))[1]
 
     if isinstance(object, (list, tuple, set, frozenset, bytearray, bytes)):
         ser_dict['type'] = object_type_name()
-        ser_dict['value'] = [serialize(obj) for obj in object]
+        ser_dict['value'] = [serialize(obj,cls) for obj in object]
 
     elif isinstance(object, (str, int, float, bool, complex)):
         ser_dict['type'] = object_type_name()
@@ -37,24 +36,49 @@ def serialize(object):
 
     elif isinstance(object, types.CellType): #cell
         ser_dict['type'] = 'cell'
-        ser_dict['value'] = serialize(object.cell_contents)
+        # print('cell_content', object.cell_contents)
+        ser_dict['value'] = serialize(object.cell_contents, cls)
 
     elif inspect.isclass(object): #class
         ser_dict['type'] = 'class'
-        ser_dict['value'] = __serialize_class(object)
+        if object!=cls:
+            ser_dict['value'] = __serialize_class(object)
+        else:
+            # print('bases', object.__bases__)
+            # print('bases[0]', object.__bases__[0])
+            ser_dict['value'] = __serialize_class(object.__bases__[0])
+
+    elif isinstance(object, property):
+        ser_dict['type'] = 'property'
+        ser_dict['value'] = __serialize_property(object)
 
     elif (not object): #None
         ser_dict['type'] = 'NoneType'
         ser_dict['value'] = None
-
     else:
         ser_dict['type'] = 'object'
         ser_dict['value'] = __serialize_object(object)
     return ser_dict
+def __serialize_property(property_obj):
+    # print('serialize_property')
+    property_dict =dict()
+    members = inspect.getmembers(property_obj)
+    # print(members)
+    for key,value in members:
+        if key == 'fget' and value:
+            property_dict['fget'] =__serialize_function(value)
 
+        elif key == 'fset' and value:
+            property_dict['fset'] = __serialize_function(value)
+
+        elif key == 'fdel' and value:
+            property_dict['fdel'] = __serialize_function(value)
+    return property_dict
 def __serialize_class(class_obj):
     class_dict = dict()
     class_dict['__name__'] = serialize(class_obj.__name__)
+    # print(class_obj.__name__, '__dict__', class_obj.__dict__)
+    # print('__bases__',class_obj.__bases__ )
     class_dict['__bases__'] = {'type': 'tuple', 'value': [serialize(base) for base in class_obj.__bases__ if base!= object]}
     for key in class_obj.__dict__:  # inspect.getmembers(obj):
         if (key in ("__name__", "__base__", "__basicsize__", "__dictoffset__", "__class__") or
@@ -66,10 +90,12 @@ def __serialize_class(class_obj):
                         types.MappingProxyType
                 )):
             continue
-        if isinstance(class_obj.__dict__[key], staticmethod):
+
+        elif isinstance(class_obj.__dict__[key], staticmethod):
             class_dict[key] = {"type": "staticmethod",
                               "value": {"type": "function",
                                         "value": __serialize_function(class_obj.__dict__[key].__func__, class_obj)}}
+
         elif isinstance(class_obj.__dict__[key], classmethod):
             class_dict[key] = {"type": "classmethod",
                               "value": {"type": "function",
@@ -81,13 +107,11 @@ def __serialize_class(class_obj):
                                "value": {"type": "function",
                                          "value": __serialize_function(class_obj.__dict__[key], class_obj)}}
 
-
         elif inspect.isfunction(class_obj.__dict__[key]):
             class_dict[key] = {"type": "function", "value": __serialize_function(class_obj.__dict__[key], class_obj)}
         else:
             class_dict[key] = serialize(class_obj.__dict__[key])
     return class_dict
-
 def __serialize_object(obj):
     object_dict = dict()
     object_dict['__class__'] = serialize(obj.__class__)
@@ -114,7 +138,8 @@ def __serialize_function(func, cls = None):
     else:
         ser_value_func['__defaults__'] = serialize(tuple())  # tupple
     if func.__closure__:
-        ser_value_func['__closure__'] = serialize(func.__closure__)  # tuple
+        # print('func_closure', func.__closure__)
+        ser_value_func['__closure__'] = serialize(func.__closure__,cls)  # tuple
     else:
         ser_value_func['__closure__'] = serialize(tuple())
    # print(ser_value_func)
@@ -129,17 +154,19 @@ def __get_globals_dict(func, cls = None):
 
         elif inspect.isclass(cl_object):
             if(cls and cl_object != cls) or (not cls):
+                print(cls)
                 globals_dict[str(key)] = serialize(cl_object)
 
         elif key != func.__code__.co_name: #if name of object doesn't math name of function itself
             globals_dict[str(key)] = serialize(cl_object)
-
         else:
             globals_dict[key] = serialize(func.__name__)
     return globals_dict
 
 def deserialize(obj: dict):
-    if(obj["type"] in base_type):
+    if obj['type'] == 'NoneType':
+        return None
+    elif(obj["type"] in base_type):
         return __make_type(obj["type"], obj["value"])
     elif (obj["type"] in base_collection):
         return __make_collection(obj["type"], obj["value"])
@@ -186,6 +213,22 @@ def deserialize(obj: dict):
     elif (obj["type"] == "object"):
         return __deser_object(obj["value"])
 
+    elif (obj["type"] == "property"):
+        return __deser_property(obj["value"])
+def __deser_property(prop_object):
+    fget = None
+    fset =None
+    fdel =None
+
+    if 'fget' in prop_object:
+        fget = __deser_func(prop_object['fget'])
+
+    if 'fset' in prop_object:
+        fset = __deser_func(prop_object['fset'])
+
+    if 'fdel' in prop_object:
+        fdel = __deser_func(prop_object['fdel'])
+    return property(fget, fset, fdel)
 def __make_type(_type, obj):
     if (_type == "int"):
         return int(obj)
@@ -248,6 +291,7 @@ def __deser_func(obj):
     funcRes.__globals__.update({funcRes.__name__: funcRes})
     return funcRes
 def __deser_class(obj):
+    # print('class_obj_value', obj)
     bases = deserialize(obj["__bases__"])
     attrs = dict()
     for key, value in obj.items():

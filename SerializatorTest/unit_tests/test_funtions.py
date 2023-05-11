@@ -35,3 +35,13 @@ def generator():
     while (True):
         yield 1
         yield 2
+def sub_generator():
+    while True:
+        value = yield
+        print('sub_generator recived value', value)
+
+def main_generator():
+    sub = sub_generator()
+    next(sub)
+    for i in range(5):
+        sub.send('Hello')
