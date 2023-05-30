@@ -1,0 +1,16 @@
+{% extends 'gym/base.html' %}
+{% block content %}
+<h2>ClubCards</h2>
+<table>
+    <th>
+        <tr>Kind</tr>
+        <tr>Discount</tr>
+    </th>
+    {% for card in cards%}
+    <tr>
+        <td>{{card}}</td>
+        <td>{{card.get_discount}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock%}

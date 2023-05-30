@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TopGym</title>
+    <link type="text/css" href="{% static 'gym/css/styles.css' %}" rel="stylesheet" />
+
+</head>
+<body>
+<div class="sidebar">
+    <a href="{% url 'registration' %}" class="button">Регистрация</a> | <a href="{% url 'login' %}" class="button">Войти</a>
+    <a href="{% url 'home' %}" class ="button">Home</a>
+</div>
+    <br><br>
+{% block content %}
+{% endblock %}
+<!--<h1>Hello World!</h1>
+<li class="last"><a href="{% url 'lesson_list' %}">Список Занятий</a></li>
+<li class="last"><a href="{% url 'master_list' %}">Список Тренеров</a></li>
+<h1>Trainers List</h1>
+{% for master in masters %}
+<article>
+<b>Name: {{master.username}}</b><br>
+<b>Subject: {{master.subject_name}}</b><br>
+<b>Email: {{master.email}}</b>
+    {% if master.photo %}
+				<p><img class="img-article-left thumb" src="{{master.photo.url}}" style="width: 300px; height: 200px;"></p>
+				{% endif %}
+    </article><br>
+{% endfor %}-->
+</body>
+</html>
