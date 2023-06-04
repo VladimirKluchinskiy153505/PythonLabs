@@ -24,6 +24,12 @@
 <article>
 <b>Name: {{master.username}}</b><br>
 <b>Subject: {{master.subject_name}}</b><br>
+    <b>PhoneNumber: {{master.phone_number}}</b><br>
+<b>Email: {{master.email}}</b><br>
+    <b>Photo:</b><br>
+    {% if master.photo %}
+        <p><img class="img-article-left thumb" src="{{master.photo.url}}" style="width: 300px; height: 200px;"></p>
+    {% endif %}
 <b>Email: {{master.email}}</b>
     </article><br>
 {% endfor %}

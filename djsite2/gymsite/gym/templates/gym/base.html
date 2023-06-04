@@ -2,15 +2,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script>
+        function displayTimezone() {
+            var timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.getElementById("timezone").innerHTML = "Current Timezone: " + timezone;
+        }
+        function displayDate() {
+            var currentDate = new Date();
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            var formattedDate = currentDate.toLocaleDateString(undefined, options);
+            document.getElementById("date").innerHTML = "Current Date: " + formattedDate;
+        }
+    </script>
     <meta charset="UTF-8">
     <title>TopGym</title>
-    <link type="text/css" href="{% static 'gym/css/styles.css' %}" rel="stylesheet" />
+   <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
 
 </head>
-<body>
+<body onload="displayTimezone(); displayDate()">
 <div class="sidebar">
     <a href="{% url 'registration' %}" class="button">Регистрация</a> | <a href="{% url 'login' %}" class="button">Войти</a>
+    <a href="{% url 'logout' %}" class="button">Выход</a>
     <a href="{% url 'home' %}" class ="button">Home</a>
+    <b id="timezone"></b>
+    <b id="date"></b>
 </div>
     <br><br>
 {% block content %}

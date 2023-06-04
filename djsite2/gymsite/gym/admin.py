@@ -17,9 +17,12 @@ class ClubCardAdmin(admin.ModelAdmin):
             return
         super().save_model(request, obj, form, change)
 class ClientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'gender', 'card')
+    list_display = ('name', 'gender', 'age', 'card','get_final_cost')
     list_display_links = ('name',)
-
+    def save_model(self, request, obj, form, change):
+        if obj.age < 18:
+            return
+        super().save_model(request, obj, form, change)
 class LessonAdmin(admin.ModelAdmin):
     list_display = ('subject_name', 'start_time', 'end_time', 'lesson_price')
     list_display_links = ('subject_name',)
@@ -40,7 +43,11 @@ class DayAdmin(admin.ModelAdmin):
             return
         super().save_model(request, obj, form, change)
 class ScheduleAdmin(admin.ModelAdmin):
-    list_display = ('weeks_count',)
+    list_display = ('name', 'weeks_count', 'get_related_lessons')
+    def get_related_lessons(self, obj):
+        related_lessons = obj.lessons.all()
+        related_lessons_str = ', '.join(obj.subject_name for obj in related_lessons)
+        return related_lessons_str
 class ClubGymAdmin(admin.ModelAdmin):
     list_display = ('name',)
     def save_model(self, request, obj, form, change):
@@ -48,6 +55,7 @@ class ClubGymAdmin(admin.ModelAdmin):
         if existing_objects.exists():
             return
         super().save_model(request, obj, form, change)
+
 
 admin.site.register(Group, GroupAdmin)
 admin.site.register(ClubCard, ClubCardAdmin)

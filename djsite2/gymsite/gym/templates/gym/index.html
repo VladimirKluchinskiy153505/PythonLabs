@@ -1,11 +1,21 @@
 {% extends 'gym/base.html' %}
 {% block content %}
-<h1>Hello World!</h1>
-<li class="last"><a href="{% url 'lesson_list' %}">Список Занятий</a></li>
-<li class="last"><a href="{% url 'master_list' %}">Список Тренеров</a></li>
-<li class="last"><a href="{% url 'card_list' %}">Виды клубных карт</a></li>
+<h1>Performance Statistics</h1>
+<p>Average clients age: {{average_client_age}}</p>
+<p>Most expensive lesson: {{most_expensive_lesson.get_subject_name}}</p>
+<p>The cheapest lesson: {{the_cheapest_lesson.get_subject_name}}</p>
+<p>The most popular lesson: {{most_popular_subject}} with {{max_students_count}} students</p>
+<p>The most profitable subject: {{most_profitable_subject}} with {{max_weekly_profit}} $ in a week</p>
+<li><a href="{% url 'lesson_list' %}">Список Занятий</a></li>
+<li><a href="{% url 'master_list' %}">Список Тренеров</a></li>
+<li><a href="{% url 'card_list' %}">Виды клубных карт</a></li>
+<li><a href="{% url 'api_test' %}">ApiTest</a></li>
 {% if mastername %}
-<li class="last>"><a href="{% url 'master_lessons' username=mastername %}">Список Занятий для тренера {{mastername}}</a></li>
+<b>Only for master:</b>
+<li><a href="{% url 'clients' %}">Список всех клиентов</a></li>
+<li><a href="{% url 'master_lessons' username=mastername %}">Список Занятий для тренера {{mastername}}</a></li>
+<li><a href="{% url 'master_students' username=mastername %}">Список индивидуальных учеников для {{mastername}}</a></li>
+<li><a href="{% url 'groups' %}">Список всех групп</a></li>
 {% endif %}
 <h1>Trainers List</h1>
 {% for master in masters %}

@@ -1,20 +1,27 @@
 from django import forms
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, RegexValidator
 
 from gym.models import LessonChoice, Master
 
 
 class RegistrationForm(forms.ModelForm):
     username = forms.CharField(max_length=100)
+    subject_name = forms.ChoiceField(choices=LessonChoice)
+    phone_regex = RegexValidator(
+        regex=r'\+375\d+$',
+        message="Phone number must be in the format: '+375XXXXXXXXX'"
+    )
+    phone_number = forms.CharField(validators=[phone_regex])
     email = forms.EmailField(required=False)
     photo = forms.ImageField(required=False,
                              validators=[FileExtensionValidator(['jpg', 'jpeg', 'png','webp'])])
-    subject_name = forms.ChoiceField(choices=LessonChoice)
+    individual_class_price = forms.IntegerField()
+
     password = forms.CharField(widget=forms.PasswordInput)
     confirm_password = forms.CharField(widget=forms.PasswordInput)
     class Meta:
         model = Master
-        fields = ['username', 'email', 'photo', 'subject_name', 'password', 'confirm_password']
+        fields = ['username', 'subject_name', 'phone_number', 'email', 'photo', 'individual_class_price', 'password', 'confirm_password']
         widgets = {
             'password': forms.PasswordInput(),
             'confirm_password': forms.PasswordInput(),
